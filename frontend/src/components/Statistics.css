@@ -1,0 +1,241 @@
+/**
+ * Statistics Styles
+ */
+
+.statistics-container {
+  display: grid;
+  gap: var(--spacing-lg);
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* Stats Overview Cards */
+.stats-overview {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--spacing-md);
+}
+
+.stat-card {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-lg);
+  background: var(--color-bg-card);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+}
+
+.stat-card .stat-icon {
+  font-size: 2rem;
+}
+
+.stat-card .stat-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-card .stat-number {
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.stat-card .stat-title {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
+
+/* Card color variants */
+.stat-card.wins {
+  border-left: 4px solid var(--color-success);
+}
+
+.stat-card.losses {
+  border-left: 4px solid var(--color-danger);
+}
+
+.stat-card.draws {
+  border-left: 4px solid var(--color-warning);
+}
+
+.stat-card.total {
+  border-left: 4px solid var(--color-primary);
+}
+
+/* Charts Row */
+.charts-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--spacing-lg);
+}
+
+.chart-card {
+  min-height: 320px;
+}
+
+.chart-card h3 {
+  margin-bottom: var(--spacing-md);
+}
+
+.chart-container {
+  margin: 0 auto;
+}
+
+.no-data {
+  text-align: center;
+  color: var(--color-text-muted);
+  padding: var(--spacing-xl);
+}
+
+/* Learning Stats */
+.learning-stats {
+  display: grid;
+  gap: var(--spacing-md);
+}
+
+.learning-stat {
+  display: flex;
+  flex-direction: column;
+  padding: var(--spacing-md);
+  background: var(--color-bg);
+  border-radius: var(--radius-md);
+}
+
+.learning-stat .learning-label {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.learning-stat .learning-value {
+  font-size: 1.75rem;
+  font-weight: 700;
+}
+
+.learning-stat .learning-description {
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+}
+
+/* Matchbox Section */
+.matchbox-section h3 {
+  margin-bottom: var(--spacing-md);
+}
+
+.matchbox-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-md);
+}
+
+.matchbox-list {
+  display: grid;
+  gap: var(--spacing-sm);
+}
+
+.matchbox-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--color-bg);
+  border-radius: var(--radius-md);
+}
+
+.matchbox-board {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+}
+
+.matchbox-board .cell {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-bg-card);
+  border-radius: 2px;
+}
+
+.matchbox-board .cell.X {
+  color: var(--color-x);
+  font-weight: bold;
+}
+
+.matchbox-board .cell.O {
+  color: var(--color-o);
+  font-weight: bold;
+}
+
+.matchbox-info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  font-size: 0.875rem;
+}
+
+.matchbox-info span {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background: var(--color-bg-card);
+  border-radius: var(--radius-sm);
+}
+
+.matchbox-uses {
+  color: var(--color-primary);
+}
+
+.matchbox-beads {
+  color: var(--color-success);
+}
+
+.matchbox-top-move {
+  color: var(--color-text-muted);
+}
+
+/* Bead Growth Chart Section */
+.bead-chart-section {
+  padding: var(--spacing-lg);
+}
+
+.bead-chart-section h3 {
+  margin: 0;
+}
+
+.chart-header {
+  margin-bottom: var(--spacing-lg);
+}
+
+.chart-description {
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+  margin-top: var(--spacing-xs);
+}
+
+.bead-chart-container {
+  width: 100%;
+}
+
+.bead-chart-container h4 {
+  font-size: 1rem;
+  color: var(--color-text-muted);
+}
+
+/* Recharts tooltip customization */
+.recharts-default-tooltip {
+  border-radius: var(--radius-md) !important;
+}
+
+.recharts-legend-wrapper {
+  font-size: 0.875rem;
+}
+
+/* Refresh Section */
+.refresh-section {
+  text-align: center;
+}

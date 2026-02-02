@@ -1,0 +1,140 @@
+/**
+ * TrainingPanel Styles
+ */
+
+.training-panel-container {
+  display: grid;
+  gap: var(--spacing-lg);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.training-card h2 {
+  margin-bottom: var(--spacing-xs);
+}
+
+/* Training Options */
+.training-options {
+  display: grid;
+  gap: var(--spacing-md);
+  margin: var(--spacing-lg) 0;
+}
+
+.option-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.option-group label {
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.option-group select {
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 1px solid var(--color-empty);
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.option-group select:focus {
+  outline: 2px solid var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+/* Train Button */
+.train-button {
+  width: 100%;
+  padding: var(--spacing-md);
+  font-size: 1.125rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+}
+
+/* Error Message */
+.error-message {
+  color: var(--color-danger);
+  margin-top: var(--spacing-md);
+  padding: var(--spacing-md);
+  background: #fef2f2;
+  border-radius: var(--radius-md);
+}
+
+/* Training Results */
+.training-results {
+  margin-top: var(--spacing-lg);
+  padding: var(--spacing-lg);
+  background: var(--color-bg);
+  border-radius: var(--radius-md);
+}
+
+.training-results h3 {
+  margin-bottom: var(--spacing-md);
+  color: var(--color-success);
+}
+
+.results-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-md);
+}
+
+.result-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--spacing-sm);
+  background: var(--color-bg-card);
+  border-radius: var(--radius-md);
+}
+
+.result-item .result-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.result-item .result-label {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+}
+
+.result-item.wins .result-value {
+  color: var(--color-success);
+}
+
+.result-item.losses .result-value {
+  color: var(--color-danger);
+}
+
+.result-item.draws .result-value {
+  color: var(--color-warning);
+}
+
+/* Training Info */
+.training-info p {
+  margin-bottom: var(--spacing-sm);
+}
+
+.training-info h3 {
+  margin-bottom: var(--spacing-md);
+}
+
+/* Reset Section */
+.reset-section {
+  border: 2px solid var(--color-danger);
+}
+
+.reset-section h3 {
+  color: var(--color-danger);
+  margin-bottom: var(--spacing-sm);
+}
+
+.reset-section button {
+  margin-top: var(--spacing-md);
+}

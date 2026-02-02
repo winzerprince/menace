@@ -1,0 +1,30 @@
+# FastAPI - The web framework
+# Why: Modern, fast, automatic docs, type hints support
+fastapi==0.109.0
+
+# Uvicorn - ASGI server to run FastAPI
+# Why: High performance, works great with FastAPI
+uvicorn[standard]==0.27.0
+
+# Pydantic - Data validation (comes with FastAPI, but explicit is good)
+# Why: Validates API requests/responses automatically
+pydantic==2.5.3
+
+# SQLAlchemy - Database ORM (optional, we'll start simple)
+# Why: Makes database operations Pythonic
+# Note: We'll use raw SQLite first for learning, then optionally migrate
+# sqlalchemy==2.0.25
+
+# Python-dotenv - Environment variable management
+# Why: Keep secrets out of code
+python-dotenv==1.0.0
+
+# Pytest - Testing framework
+# Why: Industry standard, easy to use
+pytest==7.4.4
+
+# HTTPX - Async HTTP client for testing FastAPI
+# Why: Required for testing FastAPI async endpoints
+httpx==0.26.0
+
+# CORS middleware is built into FastAPI, no extra package needed

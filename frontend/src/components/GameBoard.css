@@ -1,0 +1,165 @@
+/**
+ * GameBoard Styles
+ */
+
+.game-board-container {
+  display: grid;
+  gap: var(--spacing-lg);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.game-card {
+  text-align: center;
+}
+
+.game-card h2 {
+  margin-bottom: var(--spacing-md);
+}
+
+/* Game Settings */
+.game-settings {
+  margin-bottom: var(--spacing-lg);
+  padding: var(--spacing-md);
+  background: var(--color-bg);
+  border-radius: var(--radius-md);
+}
+
+.setting {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  cursor: pointer;
+  justify-content: center;
+}
+
+.setting input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+}
+
+/* Turn Indicator */
+.turn-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+  font-weight: 500;
+}
+
+.turn-indicator .player {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-sm);
+}
+
+.turn-indicator .player.X {
+  color: var(--color-x);
+}
+
+.turn-indicator .player.O {
+  color: var(--color-o);
+}
+
+.turn-indicator .vs {
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+}
+
+/* The Game Board */
+.board {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  max-width: 300px;
+  margin: var(--spacing-lg) auto;
+  padding: var(--spacing-md);
+  background: var(--color-bg-dark);
+  border-radius: var(--radius-lg);
+}
+
+.board.loading {
+  opacity: 0.7;
+}
+
+/* Individual Square */
+.square {
+  aspect-ratio: 1;
+  font-size: 3rem;
+  font-weight: 700;
+  background: var(--color-bg-card);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+  cursor: pointer;
+}
+
+.square:hover:not(:disabled) {
+  background: var(--color-empty);
+  transform: scale(1.02);
+}
+
+.square:disabled {
+  cursor: default;
+}
+
+.square.X {
+  color: var(--color-x);
+}
+
+.square.O {
+  color: var(--color-o);
+}
+
+.square.winning {
+  background: var(--color-success);
+  color: white;
+}
+
+/* Status Message */
+.game-message {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: var(--spacing-md) 0;
+  min-height: 2rem;
+}
+
+/* Controls */
+.game-controls {
+  display: flex;
+  gap: var(--spacing-md);
+  justify-content: center;
+  margin-top: var(--spacing-md);
+}
+
+.game-controls button {
+  min-width: 120px;
+}
+
+/* How It Works Card */
+.how-it-works {
+  background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+}
+
+.how-it-works h3 {
+  margin-bottom: var(--spacing-sm);
+  color: var(--color-primary-dark);
+}
+
+.how-it-works p {
+  margin-bottom: var(--spacing-sm);
+  font-size: 0.9375rem;
+}
+
+.how-it-works ul {
+  text-align: left;
+  margin: var(--spacing-sm) 0;
+  padding-left: var(--spacing-lg);
+}
+
+.how-it-works li {
+  margin-bottom: var(--spacing-xs);
+  font-size: 0.9375rem;
+}
