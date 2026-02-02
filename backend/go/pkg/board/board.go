@@ -4,19 +4,21 @@ Package board provides the tic-tac-toe board representation and game logic.
 DESIGN DECISIONS:
 
 1. Board Representation: String of 9 characters
-   - Each position is 'X', 'O', or '_' (empty)
-   - Positions are numbered 0-8:
 
-     0 | 1 | 2
-     ---------
-     3 | 4 | 5
-     ---------
-     6 | 7 | 8
+  - Each position is 'X', 'O', or '_' (empty)
+
+  - Positions are numbered 0-8:
+
+    0 | 1 | 2
+    ---------
+    3 | 4 | 5
+    ---------
+    6 | 7 | 8
 
 2. State Normalization:
-   - A board can be rotated 4 ways and flipped 2 ways = 8 equivalent states
-   - We normalize to the "smallest" string representation
-   - This reduces the number of unique states MENACE needs to learn
+  - A board can be rotated 4 ways and flipped 2 ways = 8 equivalent states
+  - We normalize to the "smallest" string representation
+  - This reduces the number of unique states MENACE needs to learn
 */
 package board
 

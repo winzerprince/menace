@@ -4,20 +4,20 @@ Package menace implements the MENACE machine learning algorithm.
 HOW MENACE LEARNS:
 
 1. MATCHBOXES: Each unique game state has a "matchbox" containing "beads"
-   - Each bead represents a possible move
-   - More beads = higher probability of choosing that move
+  - Each bead represents a possible move
+  - More beads = higher probability of choosing that move
 
 2. MAKING A MOVE: MENACE draws a random bead (weighted by count)
 
 3. AFTER GAME ENDS:
-   - WIN: Add beads to each move made (reward)
-   - DRAW: Add fewer beads (small reward)
-   - LOSS: Remove beads (punishment)
+  - WIN: Add beads to each move made (reward)
+  - DRAW: Add fewer beads (small reward)
+  - LOSS: Remove beads (punishment)
 
 4. OVER TIME:
-   - Winning moves accumulate beads
-   - Losing moves lose beads
-   - MENACE "learns" which moves lead to wins!
+  - Winning moves accumulate beads
+  - Losing moves lose beads
+  - MENACE "learns" which moves lead to wins!
 */
 package menace
 
@@ -30,9 +30,9 @@ import (
 
 // Matchbox represents a matchbox for a specific board state
 type Matchbox struct {
-	BoardState string         `json:"board_state"`
-	Beads      map[int]int    `json:"beads"`
-	TimesUsed  int            `json:"times_used"`
+	BoardState string      `json:"board_state"`
+	Beads      map[int]int `json:"beads"`
+	TimesUsed  int         `json:"times_used"`
 }
 
 // NewMatchbox creates a new matchbox for the given board state
@@ -118,30 +118,30 @@ type MoveRecord struct {
 
 // HistorySnapshot stores learning state at a point in time
 type HistorySnapshot struct {
-	Games        int     `json:"games"`
-	TotalBeads   int     `json:"total_beads"`
-	MatchboxCount int    `json:"matchbox_count"`
-	Wins         int     `json:"wins"`
-	Losses       int     `json:"losses"`
-	Draws        int     `json:"draws"`
-	WinRate      float64 `json:"win_rate"`
+	Games         int     `json:"games"`
+	TotalBeads    int     `json:"total_beads"`
+	MatchboxCount int     `json:"matchbox_count"`
+	Wins          int     `json:"wins"`
+	Losses        int     `json:"losses"`
+	Draws         int     `json:"draws"`
+	WinRate       float64 `json:"win_rate"`
 }
 
 // Menace is the MENACE machine learning agent
 type Menace struct {
-	mu           sync.RWMutex
-	Matchboxes   map[string]*Matchbox
-	Player       board.Player
-	MoveHistory  []MoveRecord
-	History      []HistorySnapshot
-	
+	mu          sync.RWMutex
+	Matchboxes  map[string]*Matchbox
+	Player      board.Player
+	MoveHistory []MoveRecord
+	History     []HistorySnapshot
+
 	// Learning parameters
 	InitialBeads int
 	WinReward    int
 	DrawReward   int
 	LossPenalty  int
 	MinBeads     int
-	
+
 	// Statistics
 	GamesPlayed int
 	Wins        int
@@ -340,7 +340,7 @@ func (m *Menace) GetMatchboxCount() int {
 func (m *Menace) GetHistory() []HistorySnapshot {
 	m.mu.RLock()
 	defer m.mu.RUnlock()
-	
+
 	// Return a copy to avoid race conditions
 	result := make([]HistorySnapshot, len(m.History))
 	copy(result, m.History)

@@ -31,14 +31,14 @@ type Move struct {
 
 // Game represents a single game session
 type Game struct {
-	ID           string       `json:"id"`
-	Board        *board.Board `json:"-"`
-	Menace       *menace.Menace `json:"-"`
-	MenacePlayer board.Player `json:"menace_player"`
-	CurrentTurn  board.Player `json:"current_turn"`
-	Moves        []Move       `json:"moves"`
+	ID           string           `json:"id"`
+	Board        *board.Board     `json:"-"`
+	Menace       *menace.Menace   `json:"-"`
+	MenacePlayer board.Player     `json:"menace_player"`
+	CurrentTurn  board.Player     `json:"current_turn"`
+	Moves        []Move           `json:"moves"`
 	Result       board.GameResult `json:"result"`
-	CreatedAt    time.Time    `json:"created_at"`
+	CreatedAt    time.Time        `json:"created_at"`
 }
 
 // NewGame creates a new game session

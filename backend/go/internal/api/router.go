@@ -36,6 +36,7 @@ func SetupRouter(handler *Handler) *gin.Engine {
 
 		// Training endpoints
 		api.POST("/training/self-play", handler.SelfPlayTraining)
+		api.POST("/training/estimate", handler.EstimateTraining)
 
 		// Health check
 		api.GET("/health", handler.HealthCheck)

@@ -5,14 +5,34 @@
  * MENACE plays games against a bot to learn faster.
  * 
  * TRAINING OPTIONS:
- * - Number of games to play
+ * - Number of games to play (up to 5 million)
  * - Opponent type (random or optimal)
+ * - Time and storage estimates before training
  * 
  * The training runs on the server and returns results.
  */
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import './TrainingPanel.css'
+
+/**
+ * Training option presets with human-readable descriptions
+ * These cover a wide range from quick tests to extensive training
+ */
+const TRAINING_OPTIONS = [
+  { value: 10, label: '10 games', desc: 'Quick test' },
+  { value: 50, label: '50 games', desc: 'Very quick' },
+  { value: 100, label: '100 games', desc: 'Quick' },
+  { value: 500, label: '500 games', desc: '~0.5 sec' },
+  { value: 1000, label: '1,000 games', desc: '~1 sec' },
+  { value: 5000, label: '5,000 games', desc: '~3-4 sec' },
+  { value: 20000, label: '20,000 games', desc: '~15 sec' },
+  { value: 100000, label: '100,000 games', desc: '~1 min' },
+  { value: 500000, label: '500,000 games', desc: '~6 min' },
+  { value: 1000000, label: '1,000,000 games', desc: '~12 min' },
+  { value: 3000000, label: '3,000,000 games', desc: '~35 min' },
+  { value: 5000000, label: '5,000,000 games', desc: '~1 hour' },
+]
 
 function TrainingPanel({ onTrainingComplete }) {
   // Training settings
@@ -23,6 +43,45 @@ function TrainingPanel({ onTrainingComplete }) {
   const [isTraining, setIsTraining] = useState(false)
   const [lastResult, setLastResult] = useState(null)
   const [error, setError] = useState(null)
+  
+  // Estimate state
+  const [estimate, setEstimate] = useState(null)
+  const [isLoadingEstimate, setIsLoadingEstimate] = useState(false)
+  
+  /**
+   * Fetch training estimate when numGames changes
+   */
+  useEffect(() => {
+    const fetchEstimate = async () => {
+      // Only fetch for larger training runs
+      if (numGames < 1000) {
+        setEstimate(null)
+        return
+      }
+      
+      setIsLoadingEstimate(true)
+      try {
+        const response = await fetch('/api/training/estimate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ num_games: numGames }),
+        })
+        
+        if (response.ok) {
+          const data = await response.json()
+          setEstimate(data)
+        }
+      } catch (err) {
+        console.error('Failed to fetch estimate:', err)
+      } finally {
+        setIsLoadingEstimate(false)
+      }
+    }
+    
+    // Debounce the fetch
+    const timer = setTimeout(fetchEstimate, 300)
+    return () => clearTimeout(timer)
+  }, [numGames])
   
   /**
    * Start self-play training
@@ -79,6 +138,7 @@ function TrainingPanel({ onTrainingComplete }) {
       }
       
       setLastResult(null)
+      setEstimate(null)
       
       if (onTrainingComplete) {
         onTrainingComplete()
@@ -110,12 +170,11 @@ function TrainingPanel({ onTrainingComplete }) {
               onChange={(e) => setNumGames(Number(e.target.value))}
               disabled={isTraining}
             >
-              <option value={10}>10 games</option>
-              <option value={50}>50 games</option>
-              <option value={100}>100 games</option>
-              <option value={500}>500 games</option>
-              <option value={1000}>1,000 games</option>
-              <option value={5000}>5,000 games</option>
+              {TRAINING_OPTIONS.map(opt => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label} ({opt.desc})
+                </option>
+              ))}
             </select>
           </div>
           
@@ -133,6 +192,45 @@ function TrainingPanel({ onTrainingComplete }) {
           </div>
         </div>
         
+        {/* Training Estimate */}
+        {estimate && numGames >= 1000 && (
+          <div className="training-estimate">
+            <h4>📊 Training Estimate</h4>
+            <div className="estimate-grid">
+              <div className="estimate-item">
+                <span className="estimate-label">Est. Time:</span>
+                <span className="estimate-value">{estimate.estimated_time_formatted}</span>
+              </div>
+              <div className="estimate-item">
+                <span className="estimate-label">Est. DB Size:</span>
+                <span className="estimate-value">{estimate.estimated_db_size_formatted}</span>
+              </div>
+              <div className="estimate-item">
+                <span className="estimate-label">Current Games:</span>
+                <span className="estimate-value">{estimate.current_games_played.toLocaleString()}</span>
+              </div>
+              <div className="estimate-item">
+                <span className="estimate-label">Current Matchboxes:</span>
+                <span className="estimate-value">{estimate.current_matchboxes}</span>
+              </div>
+            </div>
+          </div>
+        )}
+        
+        {isLoadingEstimate && numGames >= 1000 && (
+          <div className="training-estimate loading">
+            <span className="spinner small"></span> Loading estimate...
+          </div>
+        )}
+        
+        {/* Warning for large training runs */}
+        {numGames >= 100000 && (
+          <div className="training-warning">
+            ⚠️ Large training run! This may take several minutes. 
+            The browser will wait for completion.
+          </div>
+        )}
+        
         {/* Training Button */}
         <button
           className="btn-primary train-button"
@@ -142,10 +240,10 @@ function TrainingPanel({ onTrainingComplete }) {
           {isTraining ? (
             <>
               <span className="spinner"></span>
-              Training...
+              Training {numGames.toLocaleString()} games...
             </>
           ) : (
-            'Start Training'
+            `Start Training (${numGames.toLocaleString()} games)`
           )}
         </button>
         
@@ -160,29 +258,41 @@ function TrainingPanel({ onTrainingComplete }) {
             <h3>Training Complete!</h3>
             <div className="results-grid">
               <div className="result-item">
-                <span className="result-value">{lastResult.games_played}</span>
+                <span className="result-value">{lastResult.games_played.toLocaleString()}</span>
                 <span className="result-label">Games</span>
               </div>
               <div className="result-item wins">
-                <span className="result-value">{lastResult.wins}</span>
+                <span className="result-value">{lastResult.wins.toLocaleString()}</span>
                 <span className="result-label">Wins</span>
               </div>
               <div className="result-item losses">
-                <span className="result-value">{lastResult.losses}</span>
+                <span className="result-value">{lastResult.losses.toLocaleString()}</span>
                 <span className="result-label">Losses</span>
               </div>
               <div className="result-item draws">
-                <span className="result-value">{lastResult.draws}</span>
+                <span className="result-value">{lastResult.draws.toLocaleString()}</span>
                 <span className="result-label">Draws</span>
               </div>
               <div className="result-item">
-                <span className="result-value">{lastResult.time_seconds}s</span>
+                <span className="result-value">{lastResult.time_seconds.toFixed(2)}s</span>
                 <span className="result-label">Time</span>
               </div>
               <div className="result-item">
                 <span className="result-value">+{lastResult.new_matchboxes}</span>
                 <span className="result-label">New Matchboxes</span>
               </div>
+              {lastResult.games_per_second > 0 && (
+                <div className="result-item">
+                  <span className="result-value">{Math.round(lastResult.games_per_second).toLocaleString()}</span>
+                  <span className="result-label">Games/sec</span>
+                </div>
+              )}
+              {lastResult.total_matchboxes > 0 && (
+                <div className="result-item">
+                  <span className="result-value">{lastResult.total_matchboxes}</span>
+                  <span className="result-label">Total Matchboxes</span>
+                </div>
+              )}
             </div>
           </div>
         )}

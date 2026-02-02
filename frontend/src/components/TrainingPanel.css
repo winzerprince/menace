@@ -80,8 +80,68 @@
 
 .results-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--spacing-md);
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--spacing-sm);
+}
+
+/* Training Estimate */
+.training-estimate {
+  margin: var(--spacing-md) 0;
+  padding: var(--spacing-md);
+  background: #f0f7ff;
+  border: 1px solid #c1daff;
+  border-radius: var(--radius-md);
+}
+
+.training-estimate.loading {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  color: var(--color-text-muted);
+}
+
+.training-estimate h4 {
+  margin: 0 0 var(--spacing-sm) 0;
+  font-size: 0.9rem;
+  color: var(--color-primary);
+}
+
+.estimate-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-xs);
+}
+
+.estimate-item {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+}
+
+.estimate-label {
+  color: var(--color-text-muted);
+}
+
+.estimate-value {
+  font-weight: 600;
+}
+
+/* Training Warning */
+.training-warning {
+  margin: var(--spacing-md) 0;
+  padding: var(--spacing-md);
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  border-radius: var(--radius-md);
+  color: #c2410c;
+  font-size: 0.9rem;
+}
+
+/* Spinner sizes */
+.spinner.small {
+  width: 16px;
+  height: 16px;
+  border-width: 2px;
 }
 
 .result-item {

@@ -10,7 +10,8 @@ through reinforcement learning, using matchboxes with beads to represent move
 probabilities.
 
 Usage:
-    go run cmd/server/main.go
+
+	go run cmd/server/main.go
 
 The server runs on port 8000 by default.
 */

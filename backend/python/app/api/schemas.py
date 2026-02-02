@@ -317,7 +317,7 @@ class TrainingRequest(BaseModel):
     """
 
     num_games: int = Field(
-        default=100, ge=1, le=10000, description="Number of games to play (1-10000)"
+        default=100, ge=1, le=5000000, description="Number of games to play (1-5,000,000)"
     )
     opponent: str = Field(
         default="random", description="Opponent type: 'random' or 'optimal'"
@@ -338,6 +338,9 @@ class TrainingResponse(BaseModel):
     draws: int
     time_seconds: float = Field(description="Time taken for training")
     new_matchboxes: int = Field(description="New matchboxes created during training")
+    games_per_second: float = Field(default=0, description="Training speed")
+    total_matchboxes: int = Field(default=0, description="Total matchboxes after training")
+    estimated_db_size_kb: float = Field(default=0, description="Estimated database size in KB")
 
     class Config:
         json_schema_extra = {
@@ -348,6 +351,51 @@ class TrainingResponse(BaseModel):
                 "draws": 25,
                 "time_seconds": 0.5,
                 "new_matchboxes": 42,
+                "games_per_second": 200.0,
+                "total_matchboxes": 85,
+                "estimated_db_size_kb": 12.5,
+            }
+        }
+
+
+class TrainingEstimateRequest(BaseModel):
+    """
+    Request for training time/size estimates.
+    """
+
+    num_games: int = Field(
+        ge=1, le=5000000, description="Number of games to estimate for"
+    )
+
+    class Config:
+        json_schema_extra = {"example": {"num_games": 100000}}
+
+
+class TrainingEstimateResponse(BaseModel):
+    """
+    Estimated time and storage for training.
+    """
+
+    num_games: int = Field(description="Number of games requested")
+    estimated_time_seconds: float = Field(description="Estimated training time in seconds")
+    estimated_time_formatted: str = Field(description="Human-readable time estimate")
+    estimated_db_size_kb: float = Field(description="Estimated database size in KB")
+    estimated_db_size_formatted: str = Field(description="Human-readable size estimate")
+    current_games_played: int = Field(description="Games already played")
+    current_matchboxes: int = Field(description="Current matchbox count")
+    games_per_second_estimate: float = Field(description="Estimated games per second")
+
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "num_games": 100000,
+                "estimated_time_seconds": 75.0,
+                "estimated_time_formatted": "1m 15s",
+                "estimated_db_size_kb": 150.0,
+                "estimated_db_size_formatted": "150 KB",
+                "current_games_played": 0,
+                "current_matchboxes": 0,
+                "games_per_second_estimate": 1333.0,
             }
         }
 
