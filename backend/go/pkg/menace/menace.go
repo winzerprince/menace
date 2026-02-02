@@ -190,6 +190,11 @@ func (m *Menace) GetMove(b *board.Board) int {
 	// Get valid moves on the ORIGINAL board
 	originalMoves := b.GetEmptyPositions()
 
+	// If no valid moves, return -1
+	if len(originalMoves) == 0 {
+		return -1
+	}
+
 	// Transform valid moves to normalized board positions
 	normalizedMoves := make([]int, len(originalMoves))
 	for i, pos := range originalMoves {
@@ -205,6 +210,11 @@ func (m *Menace) GetMove(b *board.Board) int {
 
 	// Draw a bead (position on normalized board)
 	normalizedPos := matchbox.DrawBead()
+
+	// If DrawBead returns -1 (no beads), fall back to random valid move
+	if normalizedPos == -1 {
+		normalizedPos = normalizedMoves[rand.Intn(len(normalizedMoves))]
+	}
 
 	// Transform back to original board position
 	originalPos := board.InverseTransformPosition(normalizedPos, transformIdx)

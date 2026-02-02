@@ -492,7 +492,7 @@ async def self_play_training(request: TrainingRequest) -> TrainingResponse:
     new_matchboxes = menace_instance.get_matchbox_count() - initial_matchboxes
     total_matchboxes = menace_instance.get_matchbox_count()
     games_per_second = request.num_games / elapsed if elapsed > 0 else 0
-    
+
     # Estimate database size: ~200 bytes per matchbox (state + beads + metadata)
     estimated_db_size_kb = (total_matchboxes * 200) / 1024
 
@@ -560,20 +560,22 @@ def format_size(kb: float) -> str:
     """,
     tags=["Training"],
 )
-async def estimate_training(request: TrainingEstimateRequest) -> TrainingEstimateResponse:
+async def estimate_training(
+    request: TrainingEstimateRequest,
+) -> TrainingEstimateResponse:
     """Estimate training time and storage requirements."""
-    
+
     # Get current state
     current_matchboxes = menace_instance.get_matchbox_count()
     stats = menace_instance.get_stats()
     current_games = stats.get("games_played", 0)
-    
+
     # Base estimate: ~1400 games per second (measured from 5000 games in 3.5s)
     # This will vary by system, so we use a slightly conservative estimate
     games_per_second = 1400.0
-    
+
     estimated_time = request.num_games / games_per_second
-    
+
     # Storage estimation:
     # - Max ~765 unique matchboxes possible
     # - Each matchbox: ~200 bytes (state + beads + SQLite overhead)
@@ -581,14 +583,16 @@ async def estimate_training(request: TrainingEstimateRequest) -> TrainingEstimat
     max_matchboxes = 765
     bytes_per_matchbox = 200
     bytes_per_game_history = 50
-    
+
     # Matchboxes will fill up quickly (usually within first few thousand games)
     # After that, only game history grows
-    projected_matchboxes = min(max_matchboxes, current_matchboxes + request.num_games // 10)
+    projected_matchboxes = min(
+        max_matchboxes, current_matchboxes + request.num_games // 10
+    )
     matchbox_storage = projected_matchboxes * bytes_per_matchbox
     history_storage = (current_games + request.num_games) * bytes_per_game_history
     total_storage_kb = (matchbox_storage + history_storage) / 1024
-    
+
     return TrainingEstimateResponse(
         num_games=request.num_games,
         estimated_time_seconds=round(estimated_time, 2),

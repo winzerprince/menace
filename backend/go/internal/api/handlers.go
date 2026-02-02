@@ -106,14 +106,14 @@ type TrainingRequest struct {
 }
 
 type TrainingResponse struct {
-	GamesPlayed      int     `json:"games_played"`
-	Wins             int     `json:"wins"`
-	Losses           int     `json:"losses"`
-	Draws            int     `json:"draws"`
-	TimeSeconds      float64 `json:"time_seconds"`
-	NewMatchboxes    int     `json:"new_matchboxes"`
-	GamesPerSecond   float64 `json:"games_per_second"`
-	TotalMatchboxes  int     `json:"total_matchboxes"`
+	GamesPlayed       int     `json:"games_played"`
+	Wins              int     `json:"wins"`
+	Losses            int     `json:"losses"`
+	Draws             int     `json:"draws"`
+	TimeSeconds       float64 `json:"time_seconds"`
+	NewMatchboxes     int     `json:"new_matchboxes"`
+	GamesPerSecond    float64 `json:"games_per_second"`
+	TotalMatchboxes   int     `json:"total_matchboxes"`
 	EstimatedDBSizeKB float64 `json:"estimated_db_size_kb"`
 }
 
@@ -122,14 +122,14 @@ type TrainingEstimateRequest struct {
 }
 
 type TrainingEstimateResponse struct {
-	NumGames              int     `json:"num_games"`
-	EstimatedTimeSeconds  float64 `json:"estimated_time_seconds"`
-	EstimatedTimeFormatted string `json:"estimated_time_formatted"`
-	EstimatedDBSizeKB     float64 `json:"estimated_db_size_kb"`
-	EstimatedDBSizeFormatted string `json:"estimated_db_size_formatted"`
-	CurrentGamesPlayed    int     `json:"current_games_played"`
-	CurrentMatchboxes     int     `json:"current_matchboxes"`
-	GamesPerSecondEstimate float64 `json:"games_per_second_estimate"`
+	NumGames                 int     `json:"num_games"`
+	EstimatedTimeSeconds     float64 `json:"estimated_time_seconds"`
+	EstimatedTimeFormatted   string  `json:"estimated_time_formatted"`
+	EstimatedDBSizeKB        float64 `json:"estimated_db_size_kb"`
+	EstimatedDBSizeFormatted string  `json:"estimated_db_size_formatted"`
+	CurrentGamesPlayed       int     `json:"current_games_played"`
+	CurrentMatchboxes        int     `json:"current_matchboxes"`
+	GamesPerSecondEstimate   float64 `json:"games_per_second_estimate"`
 }
 
 type HistorySnapshotResponse struct {
@@ -474,9 +474,20 @@ func (h *Handler) SelfPlayTraining(c *gin.Context) {
 	req.NumGames = 100 // Default
 	req.Opponent = "random"
 
-	if err := c.ShouldBindJSON(&req); err != nil && c.Request.ContentLength > 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
+	// Only bind JSON if there's a body; otherwise use defaults
+	if c.Request.ContentLength > 0 {
+		if err := c.ShouldBindJSON(&req); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+	}
+
+	// Validate NumGames range manually for default case
+	if req.NumGames < 1 {
+		req.NumGames = 100
+	}
+	if req.NumGames > 5000000 {
+		req.NumGames = 5000000
 	}
 
 	startTime := time.Now()
@@ -491,10 +502,20 @@ func (h *Handler) SelfPlayTraining(c *gin.Context) {
 		menaceFirst := rand.Intn(2) == 0
 		g := h.gameManager.CreateGame(menaceFirst)
 
-		// Play the game
-		for !g.IsOver() {
+		// Play the game with safety limit to prevent infinite loops
+		moveCount := 0
+		maxMoves := 9 // Maximum possible moves in tic-tac-toe
+
+		for !g.IsOver() && moveCount < maxMoves {
 			if g.IsMenaceTurn() {
-				g.MenaceMove()
+				_, err := g.MenaceMove()
+				if err != nil {
+					// If MENACE can't move, pick a random valid move
+					validMoves := g.GetValidMoves()
+					if len(validMoves) > 0 {
+						g.OpponentMove(validMoves[rand.Intn(len(validMoves))])
+					}
+				}
 			} else {
 				// Bot's turn - random move
 				validMoves := g.GetValidMoves()
@@ -503,6 +524,7 @@ func (h *Handler) SelfPlayTraining(c *gin.Context) {
 					g.OpponentMove(move)
 				}
 			}
+			moveCount++
 		}
 
 		// Apply learning
@@ -524,19 +546,19 @@ func (h *Handler) SelfPlayTraining(c *gin.Context) {
 	newMatchboxes := h.menace.GetMatchboxCount() - initialMatchboxes
 	totalMatchboxes := h.menace.GetMatchboxCount()
 	gamesPerSecond := float64(req.NumGames) / elapsed
-	
+
 	// Estimate database size: ~200 bytes per matchbox
 	estimatedDBSizeKB := float64(totalMatchboxes*200) / 1024
 
 	c.JSON(http.StatusOK, TrainingResponse{
-		GamesPlayed:      req.NumGames,
-		Wins:             wins,
-		Losses:           losses,
-		Draws:            draws,
-		TimeSeconds:      elapsed,
-		NewMatchboxes:    newMatchboxes,
-		GamesPerSecond:   gamesPerSecond,
-		TotalMatchboxes:  totalMatchboxes,
+		GamesPlayed:       req.NumGames,
+		Wins:              wins,
+		Losses:            losses,
+		Draws:             draws,
+		TimeSeconds:       elapsed,
+		NewMatchboxes:     newMatchboxes,
+		GamesPerSecond:    gamesPerSecond,
+		TotalMatchboxes:   totalMatchboxes,
 		EstimatedDBSizeKB: estimatedDBSizeKB,
 	})
 }
@@ -599,14 +621,14 @@ func (h *Handler) EstimateTraining(c *gin.Context) {
 	totalStorageKB := float64(matchboxStorage+historyStorage) / 1024
 
 	c.JSON(http.StatusOK, TrainingEstimateResponse{
-		NumGames:              req.NumGames,
-		EstimatedTimeSeconds:  estimatedTime,
-		EstimatedTimeFormatted: formatTime(estimatedTime),
-		EstimatedDBSizeKB:     totalStorageKB,
+		NumGames:                 req.NumGames,
+		EstimatedTimeSeconds:     estimatedTime,
+		EstimatedTimeFormatted:   formatTime(estimatedTime),
+		EstimatedDBSizeKB:        totalStorageKB,
 		EstimatedDBSizeFormatted: formatSize(totalStorageKB),
-		CurrentGamesPlayed:    currentGames,
-		CurrentMatchboxes:     currentMatchboxes,
-		GamesPerSecondEstimate: gamesPerSecond,
+		CurrentGamesPlayed:       currentGames,
+		CurrentMatchboxes:        currentMatchboxes,
+		GamesPerSecondEstimate:   gamesPerSecond,
 	})
 }
 
